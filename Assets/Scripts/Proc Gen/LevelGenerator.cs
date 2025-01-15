@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
@@ -8,6 +9,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] CameraController cameraController;
     [SerializeField] GameObject chunkPrefab;
     [SerializeField] Transform chunkParent;
+    [SerializeField] ScoreManager scoreManager;
 
     [Header("Level Settings")]
     [Tooltip("The amount chunks we start with")]
@@ -66,10 +68,13 @@ public class LevelGenerator : MonoBehaviour
     {
         float spawnPositionZ = CalculateSpawnPositionZ();
         Vector3 ChunkSpawnPos = new Vector3(transform.position.x, transform.position.y, spawnPositionZ);
-        GameObject newChunk = Instantiate(chunkPrefab, ChunkSpawnPos, quaternion.identity, chunkParent);
+        GameObject newChunkGO = Instantiate(chunkPrefab, ChunkSpawnPos, quaternion.identity, chunkParent);
 
-        //chunks[i] = newChunk; //this will crash because in C# , List is empty, index out bound, unlike JS array is default with a undefined value
-        chunks.Add(newChunk);
+        //chunks[i] = newChunkGO; //this will crash because in C# , List is empty, index out bound, unlike JS array is default with a undefined value
+        chunks.Add(newChunkGO);
+        
+        Chunk newChunk = newChunkGO.GetComponent<Chunk>();
+        newChunk.Init(this, scoreManager);
     }
 
     float CalculateSpawnPositionZ()
