@@ -1,19 +1,19 @@
 using System.Collections.Generic;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class LevelGenerator : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] CameraController cameraController;
-    [SerializeField] GameObject chunkPrefab;
+    [SerializeField] GameObject[] chunkPrefabs;
+    [SerializeField] GameObject checkPointChunkPrefab;
     [SerializeField] Transform chunkParent;
     [SerializeField] ScoreManager scoreManager;
 
     [Header("Level Settings")]
     [Tooltip("The amount chunks we start with")]
     [SerializeField] int startingChunkAmount = 12;
+    [SerializeField] int checkPointChunkInterval = 8;
 
     [Tooltip("Do not change chunk length value unless chunk prefab size reflects change")]
     [SerializeField] float ChunkLength = 10f;
@@ -25,6 +25,7 @@ public class LevelGenerator : MonoBehaviour
     [SerializeField] float maxGravityZ = -2f;
 
     List<GameObject> chunks = new List<GameObject>();
+    int chunkSpawned = 0;
 
     private void Start()
     {
@@ -49,7 +50,7 @@ public class LevelGenerator : MonoBehaviour
             float newGravytyZ = Physics.gravity.z - speedAmount;
             newGravytyZ = Mathf.Clamp(newGravytyZ, minGravityZ, maxGravityZ);
             Physics.gravity = new Vector3(Physics.gravity.x, Physics.gravity.y, newGravytyZ);
-            
+
             cameraController.ChangeCameraFOV(speedAmount);
         }
 
@@ -68,13 +69,29 @@ public class LevelGenerator : MonoBehaviour
     {
         float spawnPositionZ = CalculateSpawnPositionZ();
         Vector3 ChunkSpawnPos = new Vector3(transform.position.x, transform.position.y, spawnPositionZ);
-        GameObject newChunkGO = Instantiate(chunkPrefab, ChunkSpawnPos, quaternion.identity, chunkParent);
-
+        GameObject chunkToSpawn = ChooseChunkToSpawn();
+        GameObject newChunkGO = Instantiate(chunkToSpawn, ChunkSpawnPos, Quaternion.identity, chunkParent);
         //chunks[i] = newChunkGO; //this will crash because in C# , List is empty, index out bound, unlike JS array is default with a undefined value
         chunks.Add(newChunkGO);
-        
         Chunk newChunk = newChunkGO.GetComponent<Chunk>();
         newChunk.Init(this, scoreManager);
+
+        chunkSpawned++;
+    }
+
+    private GameObject ChooseChunkToSpawn()
+    {
+        GameObject chunkToSpawn;
+        if (chunkSpawned % checkPointChunkInterval == 0 && chunkSpawned != 0)
+        {
+            chunkToSpawn = checkPointChunkPrefab;
+        }
+        else
+        {
+            chunkToSpawn = chunkPrefabs[UnityEngine.Random.Range(0, chunkPrefabs.Length)];
+        }
+
+        return chunkToSpawn;
     }
 
     float CalculateSpawnPositionZ()
