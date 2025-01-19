@@ -11,8 +11,9 @@ public class ScoreManager : MonoBehaviour
     private void Start() 
     {
         scoreText.text = currentScore.ToString();
+        Debug.Log(gameManager.IsGameOver);
     }
-
+ 
     public void ChangeScore(int amount)
     {
         // if(gameManager.ReturnGameOver()) return;

@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject gameOverText;
     [SerializeField] float startTime = 60f;
 
-    float timeLeft;
+    float timeLeft = 0;
     bool isGameOver = false;
 
     //properties
@@ -17,12 +17,12 @@ public class GameManager : MonoBehaviour
     // public bool IsGameOver
     // {
     //     get { return isGameOver; }
-    //     set { isGameOver = value; }
+    //     set { isGameOver = value; } 
     // } // -> tranditional way
 
     // public bool IsGameOver { get { return isGameOver; } } //-> fancy way
     // public bool IsGameOver { get; private set; } // -> syntax sugar
-    public bool IsGameOver => gameObject; // -> super syntax sugar
+    public bool IsGameOver => isGameOver; // -> super syntax sugar
 
     private void Start()
     {

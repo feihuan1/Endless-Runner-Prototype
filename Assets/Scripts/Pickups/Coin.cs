@@ -13,6 +13,6 @@ public class Coin : Pickup
 
     protected override void OnPickup()
     {
-        scoreManager.ChangeScore(scoreAmount);
+        scoreManager.ChangeScore(scoreAmount); 
     }
 }
